@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Shopping Cart</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+
+    </head>
+    <body>
+        <h1>Shopping Cart</h1>
+        <!--Users Table-->
+        <br><br>
+        <table border="1">
+            <tr><td colspan="2" align="center">Users</td></tr>
+            <tr><td>User Name:</td>
+                <td><input type="text" id="username" name="username" value=""></td>
+            </tr>
+            <tr><td>Date Of Birth</td>
+                <td><input type="date" id="dob" name="dob" value=""></td>
+            </tr>
+            <tr><td><button id="insertuser" class="button" onclick="insertUsers()">Insert</button></td>
+                <td> <button id="displayusers" class="button" onclick="displayUsers()">Display</button></td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <!--Users display table -->
+        <table id="usertable" border="1">
+            <tr>
+                <!--$('#Crd option:selected').text();-->
+                <td>User Name</td>
+                <td>Date of Birth</td>
+            </tr>
+            <tbody id="users">
+            </tbody>
+        </table>
+        <br><br>
+        <!--Item Table-->
+        <table border="1">
+            <tr><td colspan="2" align="center">Item</td></tr>
+            <tr><td>Item Name:</td>
+                <td><input type="text" id="itemname" name="itemname" value=""></td>
+            </tr>
+            <tr><td>Price</td>
+                <td><input type="number" id="price" name="price" value=""></td>
+            </tr>
+            <tr><td><button id="insertitem" class="button" onclick="insertItem()">Insert</button></td>
+                <td> <button id="displayitem" class="button" onclick="displayItem()">Display</button></td>
+            </tr>
+        </table>
+        <br><br>
+        <!--Display Item Table-->
+        <table id="itemtable" border="1">
+            <tr>
+                <td>Item Name</td>
+                <td>Price</td>
+            </tr>
+            <tbody id="item">
+            </tbody>
+        </table>
+        <br><br>
+
+        <!--User Contact Table-->
+        <table border="1">
+            <tr><td colspan="2" align="center">User Contact</td></tr>
+            <tr><td>User </td>
+                <td><select id="usercontactlist"> <option value = "0">Select User</option></select></td>
+            </tr>
+            <tr><td>City</td>
+                <td><input type="text" id="city" name="city" value=""></td>
+            </tr>
+            <tr><td>Phone Number</td>
+                <td><input type="tel" id="phone" name="phone" value=""></td>
+            </tr>
+            <tr><td><button id="insertusercontact" class="button" onclick="insertUserContact()">Insert</button></td>
+                <td> <button id="displayusercontact" class="button" onclick="displayUserContact()">Display</button></td>
+            </tr>
+        </table>
+        <br><br>
+        <!--Display User contact Table-->
+        <table id="usercontacttable" border="1">
+            <tr>
+                <td>User ID</td>
+                <td>City</td>
+                <td>Phone Number</td>
+            </tr>
+            <tbody id="usercontact">
+            </tbody>
+        </table>
+        <br><br>
+
+        <!--Orderstable-->
+        <table border="1">
+            <tr><td colspan="2" align="center">Orders</td></tr>
+
+            <tr><td>User Name</td>
+                <td><select id="userorderlist"></select></td>
+            </tr>
+            <tr><td><button id="insertorder" class="button" onclick="insertOrder()">Create Order</button></td>
+                <td> <button id="displayorder" class="button" onclick="displayOrder()">Display</button></td>
+
+            </tr>
+        </table>
+        <br><br>
+        <!--Display Orders Table-->
+        <table id="ordertable" border="1">
+            <tr>
+                <td>Order ID</td>
+                <td>User ID</td>
+            </tr>
+            <tbody id="order">
+            </tbody>
+        </table>
+        <br><br>
+        <!--Orders Details Table-->
+        <table border="1">
+            <tr><td colspan="2" align="center">Order Details</td></tr>
+            <tr><td>Order Number:</td>
+                <td><select id="orderList">
+
+                    </select></td>
+            </tr>
+            <tr><td>Item</td>
+                <td><select id="itemlist"></select></td>
+            </tr>
+            <tr><td>Quantity:</td>
+                <td><input type="number" id="quantity" name="quantity" value=""></td>
+            </tr>
+            <tr><td><button id="insertorderdetails" class="button" onclick="insertOrderDetails()">Insert</button></td>
+                <td> <button id="displayorderdetails" class="button" onclick="displayOrderDetails()">Display</button></td>
+            </tr>
+        </table>
+        <br><br>
+        <!--Display Orders details Table-->
+        <table id="orderdetailstable" border="1">
+            <tr>
+                <td>Order ID</td>
+                <td>Item ID</td>
+                <td>Quantity</td>
+            </tr>
+            <tbody id="orderdetails">
+            </tbody>
+        </table>
+        <br><br>
+
+
+
+        <!--Javascript functions Start-->
+        <script type="text/javascript">
+            window.onload = function () {
+                fillUserContactList();
+                fillOrderList();
+                fillItemList();
+            }
+            // js function to insert user values
+            function insertUsers() {
+                var users = {};
+                users["username"] = document.getElementById("username").value;
+                users["dob"] = document.getElementById("dob").value;
+
+                $.ajax({
+                    url: '/ShoppingCart/api/adduser',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: users,
+                    cache: false,
+                    success: function (data, status) {
+                        alert(data);
+                        //alert(status)
+                    }
+                });
+            }
+            
+            
+            //js function to display user values available in the table
+            function displayUsers() {
+                $.ajax({
+                    url: '/ShoppingCart/api/showuser',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: {},
+                    cache: false,
+                    success: function (data, status) {
+                        $("#users").html("");
+                        for (var i = 0; i < data.length; i++) {
+                            cell = '<td>' + data[i].username + '</td>';
+                            cell += '<td>' + data[i].dob + '</td>';
+                            $("#users").append('<tr>' + cell + '</tr>');
+                        }
+                    }
+                });
+            }
+            //js function to insert items in the table
+            function insertItem() {
+                var item = {};
+                item["itemname"] = document.getElementById("itemname").value;
+                item["price"] = document.getElementById("price").value;
+
+                $.ajax({
+                    url: '/ShoppingCart/api/insertitem',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: item,
+                    cache: false,
+                    success: function (data, status) {
+                        alert(data);
+                        //alert(status)
+                    }
+                });
+            }
+            //js function to display item values available in the table
+            function displayItem() {
+                $.ajax({
+                    url: '/ShoppingCart/api/showitem',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: {},
+                    cache: false,
+                    success: function (data, status) {
+                        $("#item").html("");
+                        for (var i = 0; i < data.length; i++) {
+                            cell = '<td>' + data[i].itemname + '</td>';
+                            cell += '<td>' + data[i].price + '</td>';
+                            $("#item").append('<tr>' + cell + '</tr>');
+                        }
+                    }
+                });
+            }
+
+            //js function to insert Users contact in the table
+            function insertUserContact() {
+                var usercontact = {};
+
+                usercontact["userid"] = $("#usercontactlist").val();
+                usercontact["city"] = document.getElementById("city").value;
+                usercontact["phone"] = document.getElementById("phone").value;
+
+                $.ajax({
+                    url: '/ShoppingCart/api/adduc',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: usercontact,
+                    cache: false,
+                    success: function (data, status) {
+                        alert(data);
+                        //alert(status)
+                    }
+                });
+            }
+
+
+            //js function to display item values available in the table
+            function displayUserContact() {
+                $.ajax({
+                    url: '/ShoppingCart/api/showusercontact',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: {},
+                    cache: false,
+                    success: function (data, status) {
+                        $("#usercontact").html("");
+                        for (var i = 0; i < data.length; i++) {
+                            cell = '<td>' + data[i].userid + '</td>';
+                            cell += '<td>' + data[i].city + '</td>';
+                            cell += '<td>' + data[i].phone + '</td>';
+                            $("#usercontact").append('<tr>' + cell + '</tr>');
+                        }
+                    }
+                });
+            }
+
+            function fillUserContactList() {
+                $.ajax({
+                    url: '/ShoppingCart/api/userlist',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: {},
+                    cache: false,
+                    success: function (data, status) {
+                        $("#usercontactlist").html("");
+                        $("#userorderlist").html("");
+                        for (var i = 0; i < data.length; i++) {
+                            $("#usercontactlist").append('<option value="' + data[i].userid + '">' + data[i].username + '</option>');
+                            $("#userorderlist").append('<option value="' + data[i].userid + '">' + data[i].username + '</option>');
+                        }
+                    }
+                });
+            }
+
+            function fillOrderList() {
+                $.ajax({
+                    url: '/ShoppingCart/api/orderlist',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: {},
+                    cache: false,
+                    success: function (data, status) {
+                        $("#orderList").html("");
+                        for (var i = 0; i < data.length; i++) {
+                            $("#orderList").append('<option value="' + data[i].orderid + '">' + data[i].orderid + '</option>');
+                        }
+                    }
+                });
+            }
+
+            function fillItemList() {
+                $.ajax({
+                    url: '/ShoppingCart/api/itemlist',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: {},
+                    cache: false,
+                    success: function (data, status) {
+                        $("#itemlist").html("");
+                        for (var i = 0; i < data.length; i++) {
+                            $("#itemlist").append('<option value="' + data[i].itemid + '">' + data[i].itemname + '</option>');
+                        }
+                    }
+                });
+            }
+
+
+            function insertOrderDetails() {
+                var orderD = {};
+                orderD["orderid"] = $("#orderList").val();
+                orderD["itemid"] = $("#itemlist").val();
+                orderD["quantity"] = document.getElementById("quantity").value;
+
+                $.ajax({
+                    url: '/ShoppingCart/api/insertorderdetails',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: orderD,
+                    cache: false,
+                    success: function (data, status) {
+                        alert(data);
+                        //alert(status)
+                    }
+                });
+            }
+
+
+            //js function to display order details values available in the table
+            function displayOrderDetails() {
+                $.ajax({
+                    url: '/ShoppingCart/api/showorderdetails',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: {},
+                    cache: false,
+                    success: function (data, status) {
+                        $("#orderdetails").html("");
+                        for (var i = 0; i < data.length; i++) {
+                            cell = '<td>' + data[i].orderid + '</td>';
+                            cell += '<td>' + data[i].itemid + '</td>';
+                            cell += '<td>' + data[i].quantity + '</td>';
+                            $("#orderdetails").append('<tr>' + cell + '</tr>');
+                        }
+                    }
+                });
+            }
+
+            function insertOrder() {
+                var order = {};
+
+                order["userid"] = $("#userorderlist").val();
+
+                $.ajax({
+                    url: '/ShoppingCart/api/insertorder',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: order,
+                    cache: false,
+                    success: function (data, status) {
+                        alert(data);
+                        //alert(status)
+                    }
+                });
+            }
+
+
+            //js function to display order details values available in the table
+            function displayOrder() {
+                $.ajax({
+                    url: '/ShoppingCart/api/showorder',
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'jsonpcallback',
+                    data: {},
+                    cache: false,
+                    success: function (data, status) {
+                        $("#order").html("");
+                        for (var i = 0; i < data.length; i++) {
+                            cell = '<td>' + data[i].orderid + '</td>';
+                            cell += '<td>' + data[i].userid + '</td>';
+                            $("#order").append('<tr>' + cell + '</tr>');
+                        }
+                    }
+                });
+            }
+
+        </script>
+        <!--Javascript functions end-->
+    </body>
+</html>
